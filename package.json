@@ -1,0 +1,53 @@
+{
+  "name": "n8n-nodes-peppox",
+  "version": "0.1.0",
+  "description": "n8n community node for Peppox Peppol invoicing API",
+  "license": "MIT",
+  "homepage": "https://github.com/peppox-peppol/n8n-nodes-peppox#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peppox-peppol/n8n-nodes-peppox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/peppox-peppol/n8n-nodes-peppox/issues"
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "peppox",
+    "peppol",
+    "e-invoicing"
+  ],
+  "author": "Peppox",
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "lint": "n8n-node lint",
+    "dev": "tsc --watch -p tsconfig.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "docs",
+    "examples",
+    "LICENSE"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/PeppoxApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Peppox/Peppox.node.js",
+      "dist/nodes/Peppox/PeppoxTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.23.1",
+    "@types/node": "^22.0.0",
+    "n8n-workflow": "^1.82.0",
+    "typescript": "^5.7.0"
+  }
+}
