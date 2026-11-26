@@ -62,7 +62,7 @@ export class Peppox implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: operations.map((operation) => ({ name: operation.name, value: operation.name, description: operation.method + ' ' + operation.path })),
-				default: operations[0].name,
+				default: 'Upload PDF to PDF2Peppol',
 				required: true,
 			},
 			{
@@ -86,7 +86,7 @@ export class Peppox implements INodeType {
 				name: 'responseField',
 				type: 'string',
 				default: 'peppox',
-				description: 'Nom de la propriété JSON qui contiendra la réponse Peppox.',
+				description: 'Nom de la propriété JSON qui contiendra la réponse Peppox',
 			},
 			{
 				displayName: 'PDF Binary Output Property',
@@ -94,7 +94,7 @@ export class Peppox implements INodeType {
 				type: 'string',
 				displayOptions: { show: { operation: ['Download PDF for received document'] } },
 				default: 'data',
-				description: 'Nom de la propriété binaire n8n qui recevra le PDF téléchargé.',
+				description: 'Nom de la propriété binaire n8n qui recevra le PDF téléchargé',
 			},
 		],
 	};
@@ -108,20 +108,20 @@ export class Peppox implements INodeType {
 			try {
 				const operationName = this.getNodeParameter('operation', i) as string;
 				const operation = operations.find((candidate) => candidate.name === operationName);
-				if (!operation) throw new Error('Operation Peppox inconnue.');
+				if (!operation) throw new NodeOperationError(this.getNode(), 'Operation Peppox inconnue.', { itemIndex: i });
 				const credentials = await this.getCredentials('peppoxApi').catch(() => ({} as IDataObject));
 				apiKey = String(credentials.apiKey ?? '').trim();
 				const baseUrl = String(credentials.baseUrl ?? 'https://api.peppox.com').replace(/\/+$/, '');
-				if (operation.auth !== 'none' && !apiKey) throw new Error('Sélectionnez les identifiants Peppox API et renseignez la clé API du compte.');
+				if (operation.auth !== 'none' && !apiKey) throw new NodeOperationError(this.getNode(), 'Sélectionnez les identifiants Peppox API et renseignez la clé API du compte.', { itemIndex: i });
 
 				const rawParameters = this.getNodeParameter('requestParameters', i, '{}') as string | Record<string, unknown>;
 				let parameters: IDataObject;
 				try {
 					parameters = (typeof rawParameters === 'string' ? JSON.parse(rawParameters) : rawParameters) as IDataObject;
 				} catch {
-					throw new Error('Request Parameters doit contenir un objet JSON valide.');
+					throw new NodeOperationError(this.getNode(), 'Request Parameters doit contenir un objet JSON valide.', { itemIndex: i });
 				}
-				if (!parameters || Array.isArray(parameters) || typeof parameters !== 'object') throw new Error('Request Parameters doit être un objet JSON.');
+				if (!parameters || Array.isArray(parameters) || typeof parameters !== 'object') throw new NodeOperationError(this.getNode(), 'Request Parameters doit être un objet JSON.', { itemIndex: i });
 
 				const query: IDataObject = {};
 			let body: IDataObject | undefined;
@@ -143,13 +143,13 @@ export class Peppox implements INodeType {
 					const binary = items[i].binary?.[propertyName];
 					if (binary) {
 						const buffer = await this.helpers.getBinaryDataBuffer(i, propertyName);
-						if (buffer.length > 15 * 1024 * 1024) throw new Error('Le PDF dépasse la limite Peppox de 15 MB.');
-						if (buffer.subarray(0, 5).toString('ascii') !== '%PDF-') throw new Error('Le fichier binaire fourni ne porte pas une signature PDF valide.');
+						if (buffer.length > 15 * 1024 * 1024) throw new NodeOperationError(this.getNode(), 'Le PDF dépasse la limite Peppox de 15 MB.', { itemIndex: i });
+						if (buffer.subarray(0, 5).toString('ascii') !== '%PDF-') throw new NodeOperationError(this.getNode(), 'Le fichier binaire fourni ne porte pas une signature PDF valide.', { itemIndex: i });
 						body ??= {};
 						body.pdf_base64 = buffer.toString('base64');
 						if (binary.fileName) body.filename = binary.fileName;
 					} else if (!parameters.pdf_base64 && !parameters.content_base64 && !parameters.pdf_url && !parameters.file_url && !parameters.url) {
-						throw new Error('Fichier PDF absent. Fournissez le binaire choisi ou un champ pdf_base64/pdf_url.');
+						throw new NodeOperationError(this.getNode(), 'Fichier PDF absent. Fournissez le binaire choisi ou un champ pdf_base64/pdf_url.', { itemIndex: i });
 					}
 				}
 				if (operation.path === '/pdf2peppol/add/' && body && body.network === undefined && query.network === undefined) {
@@ -173,7 +173,7 @@ export class Peppox implements INodeType {
 				if (operation.fileResponse) {
 					const buffer = Buffer.isBuffer(response) ? response : Buffer.from(response as ArrayBuffer);
 					if (buffer.subarray(0, 5).toString('ascii') !== '%PDF-') {
-						throw new Error('Peppox n’a pas renvoyé un PDF. Vérifiez documentId, idsupplier et type_flowin.');
+						throw new NodeOperationError(this.getNode(), 'Peppox n’a pas renvoyé un PDF. Vérifiez documentId, idsupplier et type_flowin.', { itemIndex: i });
 					}
 					const binaryProperty = this.getNodeParameter('binaryOutputProperty', i, 'data') as string;
 					const fileName = String(parameters.documentId ?? parameters.document_id ?? 'peppox-document') + '.pdf';

@@ -67,8 +67,8 @@ export class PeppoxTrigger implements INodeType {
 				name: 'documentKind',
 				type: 'options',
 				options: [
-					{ name: 'New received documents', value: 'received' },
-					{ name: 'New sent documents', value: 'sent' },
+					{ name: 'New Received Documents', value: 'received' },
+					{ name: 'New Sent Documents', value: 'sent' },
 				],
 				default: 'received',
 				required: true,
@@ -79,7 +79,7 @@ export class PeppoxTrigger implements INodeType {
 				type: 'number',
 				typeOptions: { minValue: 1, maxValue: 300 },
 				default: 100,
-				description: 'Nombre maximum de documents récents récupérés à chaque interrogation (maximum API : 300).',
+				description: 'Nombre maximum de documents récents récupérés à chaque interrogation (maximum API : 300)',
 			},
 			{
 				displayName: 'Additional Filters (JSON)',

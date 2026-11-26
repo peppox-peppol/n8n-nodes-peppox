@@ -1,7 +1,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const source = path.resolve(__dirname, '../src/nodes/Peppox/peppox.svg');
-const targetDirectory = path.resolve(__dirname, '../dist/nodes/Peppox');
-fs.mkdirSync(targetDirectory, { recursive: true });
-fs.copyFileSync(source, path.join(targetDirectory, 'peppox.svg'));
+const assets = [
+	['../nodes/Peppox/peppox.svg', '../dist/nodes/Peppox/peppox.svg'],
+	['../credentials/peppox.svg', '../dist/credentials/peppox.svg'],
+];
+
+for (const [source, target] of assets) {
+	const sourcePath = path.resolve(__dirname, source);
+	const targetPath = path.resolve(__dirname, target);
+	fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+	fs.copyFileSync(sourcePath, targetPath);
+}
