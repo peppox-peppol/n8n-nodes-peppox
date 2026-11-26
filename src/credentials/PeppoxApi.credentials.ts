@@ -3,6 +3,7 @@ import type { ICredentialType, INodeProperties } from 'n8n-workflow';
 export class PeppoxApi implements ICredentialType {
 	name = 'peppoxApi';
 	displayName = 'Peppox API';
+	icon = 'file:peppox.svg' as const;
 	documentationUrl = 'https://peppox.com/api-doc/';
 	properties: INodeProperties[] = [
 		{
