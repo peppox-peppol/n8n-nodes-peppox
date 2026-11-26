@@ -18,7 +18,10 @@
     "peppol",
     "e-invoicing"
   ],
-  "author": "Peppox",
+  "author": {
+    "name": "Peppox",
+    "email": "info@peppox.com"
+  },
   "engines": {
     "node": ">=20.15"
   },
