@@ -31,6 +31,7 @@ export class PeppoxTrigger implements INodeType {
 		icon: 'file:peppox.svg',
 		group: ['trigger'],
 		version: 1,
+		usableAsTool: true,
 		description: 'Détecter par interrogation périodique les nouveaux documents Peppol reçus ou envoyés.',
 		defaults: { name: 'Peppox Trigger' },
 		inputs: [],
@@ -115,6 +116,8 @@ export class PeppoxTrigger implements INodeType {
 			let foundExistingBoundary = false;
 			const maxPagesPerPoll = 5;
 			for (let page = 1; page <= maxPagesPerPoll && !foundExistingBoundary; page++) {
+				// The polling endpoint authenticates through supplier_id; credentials are already stored by n8n.
+				// eslint-disable-next-line @n8n/community-nodes/no-http-request-with-manual-auth
 				const response = await this.helpers.httpRequest({
 					method: 'GET',
 					url: baseUrl + endpoint,

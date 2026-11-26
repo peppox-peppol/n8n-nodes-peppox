@@ -48,6 +48,7 @@ export class Peppox implements INodeType {
 		icon: 'file:peppox.svg',
 		group: ['transform'],
 		version: 1,
+		usableAsTool: true,
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Créer, envoyer, consulter et rechercher des documents Peppol avec Peppox.',
 		defaults: { name: 'Peppox' },
@@ -155,6 +156,9 @@ export class Peppox implements INodeType {
 					body.network = 'integration';
 				}
 
+				// Peppox requires different auth field names by endpoint (supplier_id, apikey or idsupplier).
+				// Keep the endpoint-specific credential mapping above instead of sending one incorrect auth field globally.
+				// eslint-disable-next-line @n8n/community-nodes/no-http-request-with-manual-auth
 				const response = await this.helpers.httpRequest({
 					method: operation.method,
 					url: baseUrl + operation.path,
