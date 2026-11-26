@@ -1,0 +1,96 @@
+{
+  "name": "Peppox - New received documents",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentKind": "received",
+        "perPage": 100,
+        "filters": "{}"
+      },
+      "id": "e2c40625-73e8-4b99-b75f-46ee472c60a4",
+      "name": "Peppox Trigger",
+      "type": "n8n-nodes-peppox.peppoxTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e271468d-bbf8-4e82-bd84-5d53082f6d9c",
+              "name": "documentId",
+              "value": "={{$json.flowin_document_id || $json.document_id || $json.id}}",
+              "type": "string"
+            },
+            {
+              "id": "d6027e8b-2c15-4940-9bc6-4c5e2e44dc9f",
+              "name": "supplierName",
+              "value": "={{$json.supplier_name || $json.supplierName || $json.supplier?.name}}",
+              "type": "string"
+            },
+            {
+              "id": "b7dcd8f0-9bc1-4e55-b764-02d6dfbe658f",
+              "name": "invoiceNumber",
+              "value": "={{$json.invoice_number || $json.inv_id || $json.document_number}}",
+              "type": "string"
+            },
+            {
+              "id": "6110aa63-041c-4e79-9d4b-d36648db4329",
+              "name": "totalAmount",
+              "value": "={{$json.payable_amount || $json.total_amount || $json.amount}}",
+              "type": "string"
+            },
+            {
+              "id": "700722e8-7268-4b28-87f7-90d87cf0f08e",
+              "name": "currency",
+              "value": "={{$json.currency || 'EUR'}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d7006a1e-327d-4742-a872-70ad2708d6cf",
+      "name": "Prepare notification fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Peppox Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare notification fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "10e9ed78-532b-4cea-bb74-174e8d8dc9fb",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
